@@ -1,0 +1,259 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Arbeidskrav 1!</title>
+    <link rel="stylesheet" href="game.css" />
+  </head>
+  <!-- HTML KODEN TRENGER DU IKKE RØRE FOR Å LØSE OPPGAVENE. -->
+
+  <body>
+    <div class="main-container">
+      <!-- Healthbars til heroene -->
+      <div class="hero-health-containers">
+        <div class="healthbar-container">
+          <!-- healer-health sin vidde må forandres for å endre lifebar -->
+          <div class="healthbar healer-health"></div>
+          <div class="text-container">
+            <p id="healer-name-txt">Healerens navn</p>
+            <p id="healer-health-txt">400 / 400 HP</p>
+          </div>
+        </div>
+        <div class="healthbar-container">
+          <!-- archer-health sin vidde må forandres for å endre lifebar -->
+          <div class="healthbar archer-health"></div>
+          <div class="text-container">
+            <p id="archer-name-txt">Archerens navn</p>
+            <p id="archer-health-txt">600 / 600 HP</p>
+          </div>
+        </div>
+        <div class="healthbar-container">
+          <!-- warrior-health sin vidde må forandres for å endre lifebar -->
+          <div class="healthbar warrior-health"></div>
+          <div class="text-container">
+            <p id="warrior-name-txt">Warriorens navn</p>
+            <p id="warrior-health-txt">800 / 800 HP</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Healthbar til fienden -->
+      <div class="dragon-health-container">
+        <div class="healthbar-container">
+          <!-- dragon-health sin vidde må forandres for å endre lifebar -->
+          <div class="healthbar dragon-health"></div>
+          <div class="text-container">
+            <p id="dragon-name-txt">Dragens navn</p>
+            <div class="text-container dragon-health-txt">2000 / 2000 HP</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Bildecontainere for heroene -->
+      <div class="img-container healer">
+        <img class="hero" src="assets/healer.png" />
+      </div>
+      <div class="img-container archer">
+        <img class="hero" src="assets/archer.png" />
+      </div>
+      <div class="img-container warrior">
+        <img class="hero" src="assets/warrior.png" />
+      </div>
+
+      <!-- Bildecontainer for fienden -->
+      <div class="enemy-container">
+        <div class="img-container dragon-container">
+          <img class="dragon" src="assets/dragon.png" />
+        </div>
+      </div>
+    </div>
+    <script>
+      //Denne JS-koden er laget klar for deg. Den trenger du ikke endre på.
+
+      //Stats for heroes
+      let heroesArray = [
+        {
+          id: 0,
+          name: "Henriette Healer",
+          maxHP: 400,
+          currentHP: 400,
+          damage: 100,
+          alive: true,
+        },
+        {
+          id: 1,
+          name: "Ariana archer",
+          maxHP: 500,
+          currentHP: 500,
+          damage: 400,
+          alive: true,
+        },
+        {
+          id: 2,
+          name: "Wyona Warrior",
+          maxHP: 600,
+          currentHP: 600,
+          damage: 400,
+          alive: true,
+        },
+      ];
+
+      let dragonObject = {
+        name: "Daar Dragon",
+        maxHP: 2000,
+        currentHP: 2000,
+        damage: 200,
+        alive: true,
+      };
+      //Tillegsfunksjonalitet 1.
+      document.getElementById("warrior-health-txt").innerHTML = "600/600 HP";
+      document.getElementById("warrior-name-txt").innerHTML =
+        "<strong>Wyona Warrior</strong>";
+
+      document.getElementById("archer-health-txt").innerHTML = "500/500 HP";
+      document.getElementById("archer-name-txt").innerHTML =
+        "<strong>Ariana Archer</strong>";
+
+      document.getElementById("healer-name-txt").innerHTML =
+        "<strong>Henriette Healer</strong>";
+
+      document.getElementById("dragon-name-txt").innerHTML =
+        "<strong>Daar Dragon</strong>";
+
+      // 1. funksjon for at helten skal angripe og skade dragen
+      function attackDragon(hero) {
+        if (hero.alive && dragonObject.alive) {
+          dragonObject.currentHP -= hero.damage;
+
+          // Oppdater tekst for dragens helse, tilleggsfunksjonalitet 1.
+          let dragonHealthText = document.querySelector(".dragon-health-txt");
+          dragonHealthText.textContent =
+            dragonObject.currentHP + " / " + dragonObject.maxHP + " HP";
+
+          alert(`${hero.name} gjorde ${hero.damage} skade på dragen`);
+
+          if (dragonObject.currentHP <= 0) {
+            gameWon();
+          } else {
+            dragonCounterAttack(hero);
+          }
+
+          console.log("Updated dragonObject: ", dragonObject);
+        }
+      }
+
+      // 1. evenlistener for hver helt som hører etter klikk og kjører funksjonen.
+      let wyonaWarrior = document.querySelector(".img-container.warrior");
+      wyonaWarrior.addEventListener("click", function () {
+        let heroIndex = 2;
+        attackDragon(heroesArray[heroIndex]); // Wyona Warrior er på index 2 i heroesArray
+      });
+
+      let arianaArcher = document.querySelector(".img-container.archer");
+      arianaArcher.addEventListener("click", function () {
+        let heroIndex = 1;
+        attackDragon(heroesArray[heroIndex]); // Ariana Archer er på index 1 i heroesArray
+      });
+
+      let henrietteHealer = document.querySelector(".img-container.healer");
+      henrietteHealer.addEventListener("click", function () {
+        let heroIndex = 0;
+        attackDragon(heroesArray[heroIndex]); // Henriette Healer er på index 0 i heroesArray
+      });
+
+      // 2. Dragens motangrep
+      function dragonCounterAttack() {
+        if (dragonObject.alive) {
+          // Velg en tilfeldig helt
+          let randomHeroIndex = Math.floor(Math.random() * heroesArray.length);
+          let hero = heroesArray[randomHeroIndex];
+
+          if (hero.alive) {
+            // Reduser den tilfeldige heltens liv basert på dragens motangrep
+            hero.currentHP -= dragonObject.damage;
+            alert(
+              `${hero.name} ble angrepet av dragen for ${dragonObject.damage} skade!`
+            );
+
+            heroStatus(hero);
+          } else {
+            // If the selected hero is already dead, recursively call the function again.
+            dragonCounterAttack();
+          }
+
+          // Oppdater healthbaren og tekst for den tilfeldige heltens helse
+        }
+      }
+
+      // 3. Heltens status
+      function heroStatus(hero) {
+        let heroHealthText, heroImageContainer;
+
+        switch (hero.id) {
+          case 0: // Henriette Healer
+            heroHealthText = document.querySelector("#healer-health-txt");
+            heroImageContainer = document.querySelector(
+              ".img-container.healer"
+            );
+            break;
+          case 1: // Ariana Archer
+            heroHealthText = document.querySelector("#archer-health-txt");
+            heroImageContainer = document.querySelector(
+              ".img-container.archer"
+            );
+            break;
+          case 2: // Wyona Warrior
+            heroHealthText = document.querySelector("#warrior-health-txt");
+            heroImageContainer = document.querySelector(
+              ".img-container.warrior"
+            );
+            break;
+        }
+
+        // Tilleggsfunksjonalitet 1.
+        heroHealthText.textContent = `${hero.currentHP} / ${hero.maxHP} HP`;
+
+        console.log("Updated heroesArray:", heroesArray);
+
+        if (hero.currentHP <= 0) {
+          hero.alive = false;
+          hero.currentHP = 0;
+          heroHealthText.textContent = "Drept";
+
+          if (heroImageContainer) {
+            heroImageContainer.remove();
+          }
+        }
+
+        // SJekk om spillet er over
+        if (isGameOver()) {
+          alert(`Spillet er tapt! ${dragonObject.name} har vunnet!`);
+        }
+      }
+
+      //4.
+      function isGameOver() {
+        return heroesArray.every((hero) => !hero.alive);
+      }
+
+      // function
+      function gameWon() {
+        if (dragonObject.currentHP <= 0) {
+          dragonObject.alive = false;
+          dragonObject.currentHP = 0;
+          alert("Du bekjempet dragen");
+
+          // Remove dragon's image container
+          let dragonImageContainer = document.querySelector(
+            ".img-container.dragon-container"
+          );
+          if (dragonImageContainer) {
+            dragonImageContainer.remove();
+            console.log("Dragon has been removed from the battle.");
+          }
+        }
+      }
+    </script>
+  </body>
+</html>
